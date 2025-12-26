@@ -14,6 +14,11 @@ insert into roles_staff (role_name) values
 ('secretariat'),
 ('instructeur');
 
+INSERT INTO activite_status (status) VALUES
+    ('en attente'),
+    ('terminee'),
+    ('annulee');
+
 -- parent
 INSERT INTO parents (nom, prenom, adresse, telephone) VALUES
 ('Rakoto', 'Andry', 'Antananarivo', '0341234567'),

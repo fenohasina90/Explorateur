@@ -15,19 +15,15 @@ public interface StaffRepository extends JpaRepository<Staff, Long> {
             SELECT
                 ae.id                       AS annee_exercice_id,
                 EXTRACT(YEAR FROM ae.annee) AS annee_exercice,
-
                 r.id                        AS role_id,
                 r.role_name                 AS role_nom,
-
                 i.id                        AS instructeur_id,
                 i.nom                       AS instructeur_nom,
                 i.prenom                    AS instructeur_prenom,
                 i.telephone,
                 i.created_at                AS instructeur_created_at,
-
                 s.id                        AS staff_id,
                 s.created_at                AS staff_created_at
-
             FROM staff s
             JOIN instructeur i
                 ON i.id = s.id_instructeur
@@ -35,7 +31,6 @@ public interface StaffRepository extends JpaRepository<Staff, Long> {
                 ON r.id = s.role_id
             JOIN annee_exercice ae
                 ON ae.id = s.annee_exercice_id
-
             WHERE
                 ( :anneeExerciceId IS NULL OR s.annee_exercice_id = :anneeExerciceId )
             AND ( :roleId IS NULL OR s.role_id = :roleId )
@@ -43,5 +38,5 @@ public interface StaffRepository extends JpaRepository<Staff, Long> {
             ORDER BY ae.annee DESC, r.role_name, i.nom, i.prenom
             """, nativeQuery = true)
     List<StaffListeDTO> findStaffListe(@Param("anneeExerciceId") Integer anneeExerciceId,
-                                       @Param("roleId") Integer roleId);
+                                    @Param("roleId") Integer roleId);
 }

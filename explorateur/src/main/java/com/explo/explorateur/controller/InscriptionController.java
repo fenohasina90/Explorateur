@@ -46,7 +46,7 @@ public class InscriptionController {
                                                     @RequestParam("adresse") String adresse,
                                                     @RequestParam("telephone") String telephone) {
         parentService.saveParent(nom, prenom, adresse, telephone);
-        return new ModelAndView("explo/inscription/parent");
+        return new ModelAndView("redirect: /inscription/parent");
     }
 
     @GetMapping("/explorateur")
@@ -84,7 +84,6 @@ public class InscriptionController {
     public ModelAndView formulaireInscriptionClasse() {
         ModelAndView modelAndView = new ModelAndView("explo/inscription/enfant-classe");
         modelAndView.addObject("classes", classeService.getAllClasses());
-        modelAndView.addObject("annees", anneeExerciceService.getAllAnneeExercice());
         return modelAndView;
     }
 
@@ -93,7 +92,7 @@ public class InscriptionController {
                                                     @RequestParam("classeId") Integer classeId,
                                                     @RequestParam("anneeExerciceId") Integer anneeExerciceId) {
         inscriptionService.saveInscription(enfantId, classeId, anneeExerciceId);
-        return new ModelAndView("explo/inscription/enfant-classe");
+        return new ModelAndView("redirect: /inscription/classe");
     }
 
     @GetMapping("/instructeur")
@@ -106,7 +105,7 @@ public class InscriptionController {
                                                         @RequestParam("prenom") String prenom,
                                                         @RequestParam("telephone") String telephone) {
         instructeurService.saveInstructeur(nom, prenom, telephone);
-        return new ModelAndView("explo/inscription/instructeur");
+        return new ModelAndView("redirect: /inscription/instructeur");
     }   
 
     @GetMapping("/staff")
@@ -121,6 +120,6 @@ public class InscriptionController {
                                                 @RequestParam("anneeExerciceId") Integer anneeExerciceId,
                                                 @RequestParam("roleId") Integer roleId) {
         staffService.saveStaff(instructeurId, anneeExerciceId, roleId);
-        return new ModelAndView("explo/inscription/staff");
+        return new ModelAndView("redirect: /inscription/staff");
     }
 }

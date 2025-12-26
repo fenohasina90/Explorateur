@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -32,7 +31,7 @@ public class Activite {
     private LocalDate dateActivite;
 
     @Column(name = "cout")
-    private BigDecimal cout;
+    private double cout;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_budget")

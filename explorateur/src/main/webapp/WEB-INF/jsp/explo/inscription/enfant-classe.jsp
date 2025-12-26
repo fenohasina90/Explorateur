@@ -9,7 +9,11 @@
             <div class="content-header-left col-md-6 col-12 mb-2">
                 <h3 class="content-header-title">Formulaire - Reinscription d'un Explorateur</h3>
             </div>
-            
+            <div class="content-header-right col-md-6 col-12 mb-2 text-right">
+                <a href="/annee-exercice" class="btn btn-primary">
+                    <i class="la la-plus"></i> Nouvelle annee d'inscription
+                </a>
+            </div>
         </div>
         <c:if test="${not empty error}">
                 <div class="alert alert-danger">

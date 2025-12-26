@@ -41,7 +41,7 @@
                                 <div class="card-body">
 
                                     <!-- Formulaire de filtre -->
-                                    <form class="form form-horizontal form-bordered" method="get" action="/liste/enfants">
+                                    <form class="form form-horizontal form-bordered" method="get" action="/liste/explorateurs">
                                         <div class="form-body">
                                             <div class="form-group row mx-auto align-items-end">
                                                 
@@ -302,7 +302,7 @@
         // Bouton Filtrer : envoie toujours vers /liste/enfants
         $('#btnFilter').on('click', function() {
             const form = $(this).closest('form');
-            form.attr('action', '/liste/enfants');
+            form.attr('action', '/liste/explorateurs');
             form.submit();
         });
 
@@ -322,7 +322,7 @@
             // Cacher éventuellement la ligne de colonnes export
             $('#exportColumnsRow').hide();
 
-            form.attr('action', '/liste/enfants');
+            form.attr('action', '/liste/explorateurs');
             form.submit();
         });
 
@@ -338,7 +338,7 @@
                 return;
             }
 
-            if (!confirm('Confirmer l\'export PDF avec les colonnes sélectionnées ?')) {
+            if (!confirm('Confirmer l\'export PDF avec les colonnes selectionnees ?')) {
                 return;
             }
 
@@ -356,7 +356,7 @@
             form.submit();
 
             // Rétablir l'état initial du formulaire
-            form.attr('action', previousAction || '/liste/enfants');
+            form.attr('action', previousAction || '/liste/explorateurs');
             if (previousTarget) {
                 form.attr('target', previousTarget);
             } else {

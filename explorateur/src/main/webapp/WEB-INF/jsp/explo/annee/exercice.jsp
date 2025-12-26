@@ -36,7 +36,7 @@
                                             </div>
                                         </div>
                                         <div class="form-actions">
-                                            <a href="#"><button type="button" class="btn btn-warning mr-1"><i class="ft-x"></i> Annuler</button></a>
+                                            <a href="/inscription/classe"><button type="button" class="btn btn-warning mr-1"><i class="ft-x"></i> Annuler</button></a>
                                             <button type="submit" class="btn btn-primary"><i class="la la-check-square-o"></i> Enregistrer</button>
                                         </div>
                                     </form>

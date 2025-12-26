@@ -89,7 +89,7 @@ create table budget_global(
 
 create table activite_status (
     id serial primary key,
-    status varchar(50) not null
+    status varchar(50) not null -- en attente, terminee, annulee
 );
 
 create table activites (

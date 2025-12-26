@@ -13,34 +13,24 @@ public interface ParentEntiteRepository extends JpaRepository<ParentEntite, Long
 
     @Query(value = """
             SELECT
-                -- Parent
                 p.id                         AS parent_id,
                 p.nom                        AS parent_nom,
                 p.prenom                     AS parent_prenom,
                 p.telephone,
                 p.adresse                    AS adresse_parent,
-
-                -- Enfant
                 e.id                         AS enfant_id,
                 e.nom                        AS enfant_nom,
                 e.prenom                     AS enfant_prenom,
                 e.genre,
                 TO_CHAR(e.date_naissance, 'DD/MM/YYYY') AS date_naissance,
-
-                -- Âge de l’enfant (si année connue)
                 CASE
                     WHEN ae.id IS NOT NULL
                     THEN date_part('year', age(ae.annee, e.date_naissance))
                     ELSE NULL
                 END AS age_enfant,
-
-                -- Classe
                 c.id                         AS classe_id,
                 c.nom                        AS classe_nom,
-
-                -- Année
                 EXTRACT(YEAR FROM ae.annee)  AS annee_exercice
-
             FROM parents p
             JOIN enfants e
                 ON e.parent_id = p.id
@@ -60,5 +50,5 @@ public interface ParentEntiteRepository extends JpaRepository<ParentEntite, Long
                 e.nom, e.prenom
             """, nativeQuery = true)
     List<ParentEnfantFlatDTO> findParentsEnfantsListe(@Param("anneeExerciceId") Integer anneeExerciceId,
-                                                      @Param("classeId") Integer classeId);
+                                                    @Param("classeId") Integer classeId);
 }

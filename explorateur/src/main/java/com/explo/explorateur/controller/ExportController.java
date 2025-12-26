@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.text.DecimalFormat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,9 +14,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.explo.explorateur.dto.BudgetGlobalListeDTO;
+import com.explo.explorateur.dto.BudgetActiviteDTO;
+import com.explo.explorateur.dto.BudgetActiviteDetailDTO;
 import com.explo.explorateur.dto.EnfantListeDTO;
 import com.explo.explorateur.dto.StaffListeDTO;
 import com.explo.explorateur.dto.ParentListeDTO;
+import com.explo.explorateur.service.BudgetProgrammeService;
 import com.explo.explorateur.service.EnfantService;
 import com.explo.explorateur.service.ParentService;
 import com.explo.explorateur.service.StaffService;
@@ -31,12 +36,17 @@ public class ExportController {
     private final EnfantService enfantService;
     private final StaffService staffService;
     private final ParentService parentService;
+    private final BudgetProgrammeService budgetProgrammeService;
 
     @Autowired
-    public ExportController(EnfantService enfantService, StaffService staffService, ParentService parentService) {
+    public ExportController(EnfantService enfantService,
+                           StaffService staffService,
+                           ParentService parentService,
+                           BudgetProgrammeService budgetProgrammeService) {
         this.enfantService = enfantService;
         this.staffService = staffService;
         this.parentService = parentService;
+        this.budgetProgrammeService = budgetProgrammeService;
     }
 
     @GetMapping("/staff")
@@ -65,6 +75,38 @@ public class ExportController {
 
         response.setContentType("application/pdf");
         response.setHeader("Content-Disposition", "attachment; filename=liste_staff.pdf");
+
+        ConverterProperties props = new ConverterProperties();
+        props.setBaseUri("http://localhost:8081/");
+
+        HtmlConverter.convertToPdf(html, response.getOutputStream(), props);
+    }
+
+    @GetMapping("/budgets")
+    public void exportBudgetsPdf(@RequestParam(value = "anneeExerciceId", required = false) Long anneeExerciceId,
+                                 @RequestParam(value = "cols", required = false) List<String> cols,
+                                 @RequestParam(value = "anneeLabel", required = false) String anneeLabel,
+                                 HttpServletResponse response) throws IOException {
+
+        List<BudgetGlobalListeDTO> budgets = budgetProgrammeService.getBudgetsParAnnee(anneeExerciceId);
+
+        Set<String> columns = new HashSet<>();
+        if (cols == null || cols.isEmpty()) {
+            columns.add("annee");
+            columns.add("activite");
+            columns.add("date");
+            columns.add("coutActivite");
+            columns.add("status");
+            columns.add("detail");
+            columns.add("montantDetail");
+        } else {
+            columns.addAll(cols);
+        }
+
+        String html = buildHtmlBudgets(budgets, columns, anneeLabel);
+
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=liste_budgets.pdf");
 
         ConverterProperties props = new ConverterProperties();
         props.setBaseUri("http://localhost:8081/");
@@ -146,15 +188,16 @@ public class ExportController {
         sb.append("<meta charset='UTF-8'>");
         sb.append("<style>");
         sb.append("body { font-family: Arial, sans-serif; font-size: 11px; }");
-        sb.append("h1 { margin: 0; font-size: 18px; }");
-        sb.append("h2 { margin: 4px 0 0 0; font-size: 12px; color: #555; }");
-        sb.append(".header { display: flex; align-items: center; margin-bottom: 10px; }");
+        sb.append("h1 { margin: 0; font-size: 18px; letter-spacing: 1px; }");
+        sb.append("h2 { margin: 6px 0 0 0; font-size: 12px; color: #555; }");
+        sb.append(".header { display: flex; align-items: center; margin-bottom: 14px; }");
         sb.append(".header-logo { margin-right: 10px; }");
         sb.append(".header-logo img { height: 40px; }");
         sb.append(".header-text { flex: 1; text-align: center; }");
-        sb.append("table { width: 100%; border-collapse: collapse; margin-top: 10px; }");
-        sb.append("th, td { border: 1px solid #ccc; padding: 4px 6px; }");
+        sb.append("table { width: 100%; border-collapse: collapse; margin-top: 12px; }");
+        sb.append("th, td { border: 1px solid #ccc; padding: 6px 8px; line-height: 1.4; }");
         sb.append("th { background-color: #f2f2f2; }");
+        sb.append(".amount { text-align: right; }");
         sb.append(".footer { margin-top: 15px; font-size: 10px; text-align: right; color: #555; }");
         sb.append("</style>");
         sb.append("</head><body>");
@@ -238,6 +281,8 @@ public class ExportController {
         }
 
         sb.append("</tbody></table>");
+
+        
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         String exportDate = LocalDateTime.now().format(formatter);
@@ -336,6 +381,7 @@ public class ExportController {
         }
 
         sb.append("</tbody></table>");
+
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         String exportDate = LocalDateTime.now().format(formatter);
@@ -438,6 +484,156 @@ public class ExportController {
         }
 
         sb.append("</tbody></table>");
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String exportDate = LocalDateTime.now().format(formatter);
+        sb.append("<div class='footer'>Date d'export : ").append(exportDate).append("</div>");
+
+        sb.append("</body></html>");
+        return sb.toString();
+    }
+
+    private String buildHtmlBudgets(List<BudgetGlobalListeDTO> budgets, Set<String> columns, String anneeLabel) {
+        StringBuilder sb = new StringBuilder();
+        DecimalFormat montantFormatter = new DecimalFormat("#,##0.00");
+        sb.append("<html><head>");
+        sb.append("<meta charset='UTF-8'>");
+        sb.append("<style>");
+        sb.append("body { font-family: Arial, sans-serif; font-size: 11px; }");
+        sb.append("h1 { margin: 0; font-size: 18px; }");
+        sb.append("h2 { margin: 4px 0 0 0; font-size: 12px; color: #555; }");
+        sb.append(".header { display: flex; align-items: center; margin-bottom: 10px; }");
+        sb.append(".header-logo { margin-right: 10px; }");
+        sb.append(".header-logo img { height: 40px; }");
+        sb.append(".header-text { flex: 1; text-align: center; }");
+        sb.append("table { width: 100%; border-collapse: collapse; margin-top: 10px; }");
+        sb.append("th, td { border: 1px solid #ccc; padding: 4px 6px; }");
+        sb.append("th { background-color: #f2f2f2; }");
+        sb.append(".footer { margin-top: 15px; font-size: 10px; text-align: right; color: #555; }");
+        sb.append("</style>");
+        sb.append("</head><body>");
+
+        String ann = (anneeLabel == null ? "" : anneeLabel.trim());
+        String titre = "BUDGET PROGRAMME" + (ann.isEmpty() ? "" : " " + escapeHtml(ann));
+
+        sb.append("<div class='header'>");
+        sb.append("<div class='header-logo'><img src='app-assets/images/logo/logo.png' alt='Logo'></div>");
+        sb.append("<div class='header-text'>");
+        sb.append("<h1>").append(titre).append("</h1>");
+
+        if (ann.isEmpty()) {
+            sb.append("<h2>Tous les budgets (toutes ann&eacute;es)</h2>");
+        }
+
+        sb.append("</div></div>");
+
+        sb.append("<table><thead><tr>");
+        if (columns.contains("annee")) {
+            sb.append("<th>Ann&eacute;e</th>");
+        }
+        if (columns.contains("activite")) {
+            sb.append("<th>Activit&eacute;</th>");
+        }
+        if (columns.contains("date")) {
+            sb.append("<th>Date</th>");
+        }
+        if (columns.contains("coutActivite")) {
+            sb.append("<th>Co&ucirc;t activit&eacute;</th>");
+        }
+        if (columns.contains("status")) {
+            sb.append("<th>Status</th>");
+        }
+        if (columns.contains("detail")) {
+            sb.append("<th>D&eacute;tails</th>");
+        }
+        if (columns.contains("montantDetail")) {
+            sb.append("<th>Montants d&eacute;tails</th>");
+        }
+        sb.append("</tr></thead><tbody>");
+
+        double totalBudget = 0.0;
+
+        for (BudgetGlobalListeDTO bg : budgets) {
+            String anneeStr = bg.getAnnee() != null ? bg.getAnnee().toString() : "";
+            totalBudget += bg.getMontant();
+
+            if (bg.getActivites() == null || bg.getActivites().isEmpty()) {
+                sb.append("<tr>");
+                if (columns.contains("annee")) {
+                    sb.append("<td>").append(escapeHtml(anneeStr)).append("</td>");
+                }
+                if (columns.contains("activite")) {
+                    sb.append("<td></td>");
+                }
+                if (columns.contains("date")) {
+                    sb.append("<td></td>");
+                }
+                if (columns.contains("coutActivite")) {
+                    sb.append("<td></td>");
+                }
+                if (columns.contains("status")) {
+                    sb.append("<td></td>");
+                }
+                if (columns.contains("detail")) {
+                    sb.append("<td></td>");
+                }
+                if (columns.contains("montantDetail")) {
+                    sb.append("<td></td>");
+                }
+                sb.append("</tr>");
+            } else {
+                for (BudgetActiviteDTO act : bg.getActivites()) {
+                    sb.append("<tr>");
+                    if (columns.contains("annee")) {
+                        sb.append("<td>").append(escapeHtml(anneeStr)).append("</td>");
+                    }
+                    if (columns.contains("activite")) {
+                        sb.append("<td>").append(escapeHtml(act.getNom())).append("</td>");
+                    }
+                    if (columns.contains("date")) {
+                        sb.append("<td>").append(escapeHtml(act.getDateActivite())).append("</td>");
+                    }
+                    if (columns.contains("coutActivite")) {
+                        sb.append("<td class='amount'>");
+                        sb.append(montantFormatter.format(act.getCout())).append(" Ar");
+                        sb.append("</td>");
+                    }
+                    if (columns.contains("status")) {
+                        sb.append("<td>").append(escapeHtml(act.getStatus())).append("</td>");
+                    }
+
+                    // Agréger plusieurs détails dans une seule cellule (comme les enfants pour un parent)
+                    if (columns.contains("detail")) {
+                        sb.append("<td>");
+                        if (act.getDetails() != null && !act.getDetails().isEmpty()) {
+                            for (BudgetActiviteDetailDTO det : act.getDetails()) {
+                                sb.append("&bull; ").append(escapeHtml(det.getDetails())).append("<br/>");
+                            }
+                        }
+                        sb.append("</td>");
+                    }
+
+                    if (columns.contains("montantDetail")) {
+                        sb.append("<td class='amount'>");
+                        if (act.getDetails() != null && !act.getDetails().isEmpty()) {
+                            for (BudgetActiviteDetailDTO det : act.getDetails()) {
+                                sb.append(montantFormatter.format(det.getMontant())).append(" Ar").append("<br/>");
+                            }
+                        }
+                        sb.append("</td>");
+                    }
+
+                    sb.append("</tr>");
+                }
+            }
+        }
+
+        sb.append("</tbody></table>");
+
+        // Total global des budgets en bas à droite
+        sb.append("<div style='margin-top:10px; text-align:right; font-weight:bold;'>");
+        sb.append("Total budget : ").append(montantFormatter.format(totalBudget)).append(" Ar");
+        sb.append("</div>");
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         String exportDate = LocalDateTime.now().format(formatter);

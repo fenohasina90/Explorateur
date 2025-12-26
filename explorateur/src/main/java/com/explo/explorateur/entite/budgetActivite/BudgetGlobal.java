@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.explo.explorateur.entite.constant.AnneeExercice;
@@ -25,7 +24,7 @@ public class BudgetGlobal {
     private AnneeExercice anneeExercice;
 
     @Column(name = "montant", nullable = false)
-    private BigDecimal montant;
+    private double montant;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

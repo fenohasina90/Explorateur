@@ -26,8 +26,8 @@ public class AnneeExerciceController {
     }
 
     @PostMapping()
-    public String ajouterAnneeExercice(@RequestParam("annee") Integer annee) {
+    public ModelAndView ajouterAnneeExercice(@RequestParam("annee") Integer annee) {
         anneeExerciceService.saveAnneeExercice(annee);
-        return "redirect:/annee-exercice";
+        return new ModelAndView("redirect: /inscription/classe");
     }
 }

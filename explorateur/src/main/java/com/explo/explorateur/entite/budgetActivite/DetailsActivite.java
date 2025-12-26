@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -27,7 +26,7 @@ public class DetailsActivite {
     private String details;
 
     @Column(name = "montant")
-    private BigDecimal montant;
+    private double montant;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
