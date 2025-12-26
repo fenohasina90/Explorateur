@@ -1,5 +1,5 @@
 <%--<%@ page contentType="text/html; charset=UTF-8" %>--%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%-- <%@ page contentType="text/html;charset=UTF-8" language="java" %> --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!-- BEGIN: Header-->
@@ -9,7 +9,7 @@
             <ul class="nav navbar-nav flex-row">
                 <li class="nav-item mobile-menu d-md-none mr-auto"><a class="nav-link nav-menu-main menu-toggle hidden-xs" href="#"><i class="ft-menu font-large-1"></i></a></li>
                 <li class="nav-item"><a class="navbar-brand" href="index.html"><img class="brand-logo" alt="modern admin logo" src="/app-assets/images/logo/logo.png">
-                    <h3 class="brand-text">Modern</h3>
+                    <h3 class="brand-text">Explorateur</h3>
                 </a></li>
                 <li class="nav-item d-md-none"><a class="nav-link open-navbar-container" data-toggle="collapse" data-target="#navbar-mobile"><i class="la la-ellipsis-v"></i></a></li>
             </ul>
@@ -100,88 +100,87 @@
             <!-- Tableau de bord (app) -->
 
             <!-- Dashboard -->
-            <c:if test="${not empty sessionScope.connecte}">
-                <c:if test="${sessionScope.connecte == 'RH'}">
-                    <li class="nav-item">
-                        <a class="menu-item" href="/dashboard">
-                            <i class="la la-dashboard"></i>
-                            <span>TABLEAU DE BORD</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="menu-item" href="/entreprise/employes">
-                            <i class="la la-users"></i>
-                            <span>EMPLOYE</span>
-                        </a>
-                    </li>
-                    <!-- Valider Offre -->
-                    <li class="nav-item">
-                        <a href="index.html">
-                            <i class="la la-check-circle"></i>
-                            <span class="menu-title" data-i18n="Dashboard">VALIDER OFFRE</span>
-                        </a>
-                        <ul class="menu-content">
-                            <li>
-                                <a class="menu-item" href="/admin/offre/rh">
-                                    <i class="la la-list-alt"></i>
-                                    <span data-i18n="eCommerce">Liste Offre</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <!-- QCM -->
-                    <li class="nav-item">
-                        <a href="index.html">
-                            <i class="la la-question-circle"></i>
-                            <span class="menu-title" data-i18n="Dashboard">QCM</span>
-                        </a>
-                        <ul class="menu-content">
-                            <li>
-                                <a class="menu-item" href="/qcm/resultats">
-                                    <i class="la la-file-text"></i>
-                                    <span data-i18n="eCommerce">Liste Resultat</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <!-- Entretien -->
-                    <li class="nav-item">
-                        <a href="index.html">
-                            <i class="la la-calendar"></i>
-                            <span class="menu-title" data-i18n="Dashboard">ENTRETIEN</span>
-                        </a>
-                        <ul class="menu-content">
-                            <li>
-                                <a class="menu-item" href="/qcm/entretiens">
-                                    <i class="la la-calendar-check-o"></i>
-                                    <span data-i18n="eCommerce">Planing entretien</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                </c:if>
-            </c:if>
-
-            <!-- Offre -->
+            <li class="nav-item">
+                <a class="menu-item" href="#">
+                    <i class="las la-calendar-alt"></i>
+                    <span>TABLEAU DE BORD</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="menu-item" href="/entreprise/employes">
+                    <i class="la la-dashboard"></i>
+                    <span>ANNEE EXERCICE</span>
+                </a>
+            </li>
+            <!-- Valider Offre -->
             <li class="nav-item">
                 <a href="index.html">
-                    <i class="la la-briefcase"></i>
-                    <span class="menu-title" data-i18n="Dashboard">OFFRE</span>
+                    <i class="la la-check-circle"></i>
+                    <span class="menu-title" data-i18n="Dashboard">VALIDER OFFRE</span>
                 </a>
                 <ul class="menu-content">
                     <li>
-                        <a class="menu-item" href="/admin/offre/${sessionScope.idConnecte}">
+                        <a class="menu-item" href="/admin/offre/rh">
+                            <i class="la la-list-alt"></i>
+                            <span data-i18n="eCommerce">Liste Offre</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- QCM -->
+            <li class="nav-item">
+                <a href="index.html">
+                    <i class="la la-question-circle"></i>
+                    <span class="menu-title" data-i18n="Dashboard">QCM</span>
+                </a>
+                <ul class="menu-content">
+                    <li>
+                        <a class="menu-item" href="/qcm/resultats">
+                            <i class="la la-file-text"></i>
+                            <span data-i18n="eCommerce">Liste Resultat</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- Entretien -->
+            <li class="nav-item">
+                <a href="index.html">
+                    <i class="la la-calendar"></i>
+                    <span class="menu-title" data-i18n="Dashboard">BUDGET & ACTIVITE</span>
+                </a>
+                <ul class="menu-content">
+                    <li>
+                        <a class="menu-item" href="/qcm/entretiens">
+                            <i class="la la-calendar-check-o"></i>
+                            <span data-i18n="eCommerce">Planing entretien</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a href="index.html">
+                    <i class="la la-users"></i>
+                    <span class="menu-title" data-i18n="Dashboard">MEMBRE</span>
+                </a>
+                <ul class="menu-content">
+                    <li>
+                        <a class="menu-item" href="/liste/staffs">
                             <i class="la la-list"></i>
-                            <span data-i18n="eCommerce">Liste</span>
+                            <span data-i18n="eCommerce">Staffs</span>
                         </a>
                     </li>
                     <li>
-                        <a class="menu-item" href="/admin/offre/add">
-                            <i class="la la-plus-circle"></i>
-                            <span data-i18n="Crypto">Nouveau</span>
+                        <a class="menu-item" href="/liste/explorateurs">
+                            <i class="la la-list"></i>
+                            <span data-i18n="Crypto">Explorateurs</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="menu-item" href="/liste/parents">
+                            <i class="la la-list"></i>
+                            <span data-i18n="Crypto">Parents</span>
                         </a>
                     </li>
                 </ul>

@@ -19,7 +19,7 @@ create table classes (
 
 create table annee_exercice (
     id serial primary key,
-    annee int not null,
+    annee date not null,
     created_at timestamp default current_timestamp
 );
 
@@ -39,6 +39,7 @@ create table enfants (
     id serial primary key,
     nom varchar(100) not null,  
     prenom varchar(100) not null,
+    genre varchar(10) not null,
     date_naissance date,
     adresse varchar(255),
     parent_id integer references parents(id),
